@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>APEX FOCUS F1 戰術讀書系統</title>
+  <!-- Tailwind CSS 樣式庫 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#0A0D14] text-slate-100 font-sans min-h-screen flex flex-col select-none">
+  
+  <!-- 頂部遙測導覽列 -->
+  <header class="border-b border-slate-800 bg-[#0F131C] px-4 py-3 sticky top-0 z-50">
+    <div class="max-w-xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <div class="bg-red-600 text-white font-black italic px-2 py-0.5 rounded transform -skew-x-12 shadow-md text-sm">
+          APEX
+        </div>
+        <h1 class="text-xs font-bold tracking-wider uppercase font-mono text-white">
+          F1 戰術讀書系統
+        </h1>
+      </div>
+      <div class="flex items-center space-x-2 font-mono text-xs">
+        <div class="bg-slate-900 border border-slate-800 px-2 py-1 rounded text-amber-400 font-bold" id="headerLaps">
+          0 Laps
+        </div>
+        <div class="bg-slate-900 border border-slate-800 px-2 py-1 rounded text-emerald-400 font-bold" id="headerHp">
+          785 HP
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 分頁導覽列 -->
+  <nav class="bg-[#0B0E17] border-b border-slate-800 sticky top-[53px] z-40">
+    <div class="max-w-xl mx-auto flex justify-around text-xs font-mono py-2.5">
+      <button onclick="switchTab('timer')" id="btnTabTimer" class="px-3 py-1.5 rounded-lg font-bold text-red-500 bg-red-950/40 border border-red-800/50">計時器</button>
+      <button onclick="switchTab('upgrades')" id="btnTabUpgrades" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white">PU引擎</button>
+      <button onclick="switchTab('tasks')" id="btnTabTasks" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white">讀書計畫</button>
+    </div>
+  </nav>
+
+  <!-- 主要內容區 -->
+  <main class="flex-grow max-w-xl w-full mx-auto p-4 space-y-6 pb-20">
+
+    <!-- 1. 計時器面板 -->
+    <div id="tabTimer" class="space-y-4">
+      <div class="bg-gradient-to-b from-[#0F131D] to-[#080B12] border border-slate-800 rounded-2xl p-6 text-center shadow-2xl">
+        <div class="flex justify-center gap-2 mb-4 font-mono text-xs">
+          <button onclick="setTimerMode('SPRINT', 25)" id="modeSprint" class="px-3 py-1.5 rounded border bg-red-600 border-red-500 text-white font-bold">25M 衝刺</button>
+          <button onclick="setTimerMode('LONG', 50)" id="modeLong" class="px-3 py-1.5 rounded border bg-slate-900 border-slate-800 text-slate-400">50M 巡航</button>
+          <button onclick="setTimerMode('PIT', 5)" id="modePit" class="px-3 py-1.5 rounded border bg-slate-900 border-slate-800 text-slate-400">5M 休息</button>
+        </div>
+
+        <div class="text-7xl font-black font-mono tracking-tighter text-white my-6" id="timerDisplay">
+          25:00
+        </div>
+        <div class="text-xs font-mono text-slate-400 uppercase tracking-widest" id="modeTitle">Sprint Stint (單圈衝刺)</div>
+
+        <div class="flex justify-center items-center space-x-3 mt-6 font-mono">
+          <button id="mainToggleBtn" onclick="toggleTimer()" class="flex-grow py-3.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-red-600/30 transition">
+            PUSH NOW (啟動)
+          </button>
+          <button onclick="resetTimer()" class="px-4 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition border border-slate-700 text-xs">
+            重置
+          </button>
+        </div>
+      </div>
+
+      <!-- 快速圈數回報 -->
+      <div class="bg-[#0F131D] border border-slate-800 rounded-2xl p-4 font-mono">
+        <div class="text-xs font-bold text-slate-400 mb-2">🏁 賽道遙測與圈數累計</div>
+        <button onclick="addLap()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow transition">
+          +1 圈專注完成 (Lap Completed)
+        </button>
+      </div>
+    </div>
+
+    <!-- 2. PU 引擎升級庫 -->
+    <div id="tabUpgrades" class="space-y-3 hidden font-mono">
+      <div class="text-xs font-bold text-slate-400 mb-2">⚡ 裝備中的動力單元 (PU)</div>
+      <div class="bg-[#0F131D] border border-slate-800 rounded-xl p-4 flex justify-between items-center">
+        <div>
+          <div class="text-sm font-bold text-white">MGU-K 覆盤動能回收</div>
+          <div class="text-[10px] text-slate-500">主動回想與記憶提取</div>
+        </div>
+        <div class="text-emerald-400 font-bold text-xs">+100 HP</div>
+      </div>
+      <div class="bg-[#0F131D] border border-slate-800 rounded-xl p-4 flex justify-between items-center">
+        <div>
+          <div class="text-sm font-bold text-white">DRS 尾翼減阻系統</div>
+          <div class="text-[10px] text-slate-500">手機禁食與數位極簡</div>
+        </div>
+        <div class="text-emerald-400 font-bold text-xs">+85 HP</div>
+      </div>
+    </div>
+
+    <!-- 3. 讀書計畫與任務 -->
+    <div id="tabTasks" class="space-y-3 hidden font-mono">
+      <div class="text-xs font-bold text-slate-400 mb-2">📋 今日衝刺任務清單</div>
+      <div class="bg-[#0F131D] border border-slate-800 rounded-xl p-4 flex justify-between items-center">
+        <div>
+          <span class="text-[10px] bg-red-950 text-red-400 px-1.5 py-0.5 rounded border border-red-800">數學</span>
+          <div class="text-sm font-bold text-white mt-1">微積分 第四章 題庫演練</div>
+        </div>
+        <button onclick="alert('已完成！')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs rounded border border-slate-700">完成</button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 核心運作腳本 -->
+  <script>
+    // 資料狀態
+    let laps = parseInt(localStorage.getItem('apex_laps')) || 0;
+    let totalHp = 785;
+    
+    // 初始化畫面數據
+    document.getElementById('headerLaps').innerText = laps + ' Laps';
+    document.getElementById('headerHp').innerText = totalHp + ' HP';
+
+    // 分頁切換
+    function switchTab(tabName) {
+      document.getElementById('tabTimer').classList.add('hidden');
+      document.getElementById('tabUpgrades').classList.add('hidden');
+      document.getElementById('tabTasks').classList.add('hidden');
+
+      document.getElementById('btnTabTimer').className = "px-3 py-1.5 rounded-lg text-slate-400 hover:text-white";
+      document.getElementById('btnTabUpgrades').className = "px-3 py-1.5 rounded-lg text-slate-400 hover:text-white";
+      document.getElementById('btnTabTasks').className = "px-3 py-1.5 rounded-lg text-slate-400 hover:text-white";
+
+      if (tabName === 'timer') {
+        document.getElementById('tabTimer').classList.remove('hidden');
+        document.getElementById('btnTabTimer').className = "px-3 py-1.5 rounded-lg font-bold text-red-500 bg-red-950/40 border border-red-800/50";
+      } else if (tabName === 'upgrades') {
+        document.getElementById('tabUpgrades').classList.remove('hidden');
+        document.getElementById('btnTabUpgrades').className = "px-3 py-1.5 rounded-lg font-bold text-red-500 bg-red-950/40 border border-red-800/50";
+      } else if (tabName === 'tasks') {
+        document.getElementById('tabTasks').classList.remove('hidden');
+        document.getElementById('btnTabTasks').className = "px-3 py-1.5 rounded-lg font-bold text-red-500 bg-red-950/40 border border-red-800/50";
+      }
+    }
+
+    // 增加圈數
+    function addLap() {
+      laps += 1;
+      localStorage.setItem('apex_laps', laps);
+      document.getElementById('headerLaps').innerText = laps + ' Laps';
+      alert('🏎️ P1! 成功完成一圈專注衝刺！');
+    }
+
+    // 計時器核心邏輯
+    let timerRunning = false;
+    let timeLeft = 25 * 60;
+    let timerInterval = null;
+    let currentModeName = 'Sprint Stint (單圈衝刺)';
+
+    function setTimerMode(mode, mins) {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      timeLeft = mins * 60;
+      updateDisplay();
+      document.getElementById('mainToggleBtn').innerText = "PUSH NOW (啟動)";
+      document.getElementById('mainToggleBtn').className = "flex-grow py-3.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-red-600/30 transition";
+
+      document.getElementById('modeSprint').className = "px-3 py-1.5 rounded border bg-slate-900 border-slate-800 text-slate-400";
+      document.getElementById('modeLong').className = "px-3 py-1.5 rounded border bg-slate-900 border-slate-800 text-slate-400";
+      document.getElementById('modePit').className = "px-3 py-1.5 rounded border bg-slate-900 border-slate-800 text-slate-400";
+
+      if (mode === 'SPRINT') {
+        currentModeName = 'Sprint Stint (單圈衝刺)';
+        document.getElementById('modeSprint').className = "px-3 py-1.5 rounded border bg-red-600 border-red-500 text-white font-bold";
+      } else if (mode === 'LONG') {
+        currentModeName = 'Long Stint (長途巡航)';
+        document.getElementById('modeLong').className = "px-3 py-1.5 rounded border bg-red-600 border-red-500 text-white font-bold";
+      } else {
+        currentModeName = 'PIT Stop (休息補給)';
+        document.getElementById('modePit').className = "px-3 py-1.5 rounded border bg-blue-600 border-blue-500 text-white font-bold";
+      }
+      document.getElementById('modeTitle').innerText = currentModeName;
+    }
+
+    function toggleTimer() {
+      const btn = document.getElementById('mainToggleBtn');
+      if (!timerRunning) {
+        timerRunning = true;
+        btn.innerText = "BOX / PAUSE (暫停)";
+        btn.className = "flex-grow py-3.5 bg-amber-500 text-slate-950 font-bold text-xs rounded-xl shadow transition";
+
+        timerInterval = setInterval(() => {
+          if (timeLeft > 0) {
+            timeLeft--;
+            updateDisplay();
+          } else {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            laps += 1;
+            localStorage.setItem('apex_laps', laps);
+            document.getElementById('headerLaps').innerText = laps + ' Laps';
+            alert('🏁 衝刺完成！自動增加 1 圈！');
+            setTimerMode('PIT', 5);
+          }
+        }, 1000);
+      } else {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        btn.innerText = "PUSH NOW (啟動)";
+        btn.className = "flex-grow py-3.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-red-600/30 transition";
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      timeLeft = 25 * 60;
+      updateDisplay();
+      document.getElementById('mainToggleBtn').innerText = "PUSH NOW (啟動)";
+      document.getElementById('mainToggleBtn').className = "flex-grow py-3.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-red-600/30 transition";
+    }
+
+    function updateDisplay() {
+      const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+      const s = (timeLeft % 60).toString().padStart(2, '0');
+      document.getElementById('timerDisplay').innerText = `${m}:${s}`;
+    }
+  </script>
+</body>
+</html>
